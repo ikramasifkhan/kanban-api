@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,19 +25,13 @@ class TodoRequest extends FormRequest
      */
     public function rules()
     {
-        switch ($this->method()) {
-            case 'POST':
-                return [
-                    'title'=>'string|required',
-                ];
-            case 'PATCH':
-            case 'PUT':
-                return [
-                    'id'=>'required|numeric',
-                    'status'=>Rule::in(['initial', 'in_progress', 'done']),
-                ];
+        return [
+            'title'=>'string|required',
+        ];
+    }
 
-        }
-
+    public function failedValidation(Validator $validator)
+    {
+        return response()->sendValidationError($validator->errors());
     }
 }
